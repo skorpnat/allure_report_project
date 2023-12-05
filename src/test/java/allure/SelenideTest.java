@@ -15,6 +15,7 @@ import static org.openqa.selenium.By.linkText;
 public class SelenideTest extends BaseTest {
     private static final String REPOSITORY = "eroshenkoam/allure-example";
     private static final String ISSUE = "80";
+
     @Test
     @DisplayName("Selenide Test with listener")
     public void testIssueSearch() {
@@ -40,22 +41,34 @@ public class SelenideTest extends BaseTest {
         step("Открываем главную страницу", () -> {
             open("https://github.com");
         });
-        step("Ввод в поисковую строку названия репозитория " + REPOSITORY, () -> {
+        step("Вводим в поисковую строку названия репозитория " + REPOSITORY, () -> {
             $(".search-input").click();
             $("#query-builder-test").sendKeys("eroshenkoam/allure-example");
             $("#query-builder-test").pressEnter();
         });
-        step("Выбор репозитория из списка найденных", () -> {
+        step("Кликаем по линку репозитория в списке найденных", () -> {
             $(linkText("eroshenkoam/allure-example")).click();
         });
-        step("Нажатие на таб", () -> {
+        step("Нажимаем на таб", () -> {
             $("#issues-tab").click();
         });
-        step("Проверка отображения issue с номером " + ISSUE , () -> {
+        step("Проверяем отображение issue с номером " + ISSUE, () -> {
             $(withText("#" + ISSUE)).should(Condition.exist);
         });
 
     }
 
+    @Test
+    @DisplayName("Test with Annotated steps")
+    public void testAnnotatedStepsIssueSearch() {
+        WebSteps steps = new WebSteps();
+        SelenideLogger.addListener("allure", new AllureSelenide());
+        steps.openMainPage();
+        steps.searchForRepository(REPOSITORY);
+        steps.clickOnRepositoryLink(REPOSITORY);
+        steps.openIssuesTab();
+        steps.shouldSeeIssuesWithLink(ISSUE);
+
+    }
 
 }
